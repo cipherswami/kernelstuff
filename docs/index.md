@@ -1,5 +1,3 @@
-# Kernel Proagramming <!-- omit in toc -->
-
 This document provides an overview of kernel programming and various concepts related to device drivers, kernel modules, and commands for managing them.
 
 ### Table of Contents <!-- omit in toc -->
