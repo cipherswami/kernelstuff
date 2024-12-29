@@ -1,0 +1,1 @@
+obj-$(CONFIG_DEPEND_MOD) += depend_mod.o 

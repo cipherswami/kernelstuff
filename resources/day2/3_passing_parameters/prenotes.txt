@@ -18,7 +18,7 @@ How to pass Parameters to modules?
 We can add parameters using module_param macro. Declared in moduleparam.h file
 
 #define module_param(name, type, perm)              \
-    module_param_named(name, name, type, perm)
+    module_param_named(name, type, perm)
 
 name: name of the variable
 type: Type of the Variable. Supported types are charp, bool, invbool, int, long, short, uint, ulong, ushort

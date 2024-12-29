@@ -1,78 +1,97 @@
 ###################### Linux Kernel Module Makefile #######################
-## Author		: 	Aravind Potluri <aravindswami135@gmail.com>
-## Arguments	: 	
-#					all 		- Builds the kernel module. 
-#					clean 		- Clean up the build artifacts.
-#					sign* 		- Signs the module. [Secure Boot Devices]
+# Author		: 	Aravind Potluri <aravindswami135@gmail.com>
+# Arguments		: 	
+#					all			- Builds all module. 
+#					module		- Builds the defined module. 
+#					clean 		- Cleans the module build artifacts.
+#					sign 		- Signs the module. [Requires *signmod]
+#					lsmod		- List the last few installed modules.
 #					insert 		- Inserts the module for testing.
 #					remove 		- Removes the inserted module. 
 #					install 	- Module will be placed in source tree.
-#					uninstall	- Module will be remvoed from source tree.
+#					uninstall	- Module will be removed from source tree.
 #					load 		- Load the source tree module. [insert]
-#					unload 		- Unload the modle from kernel. [remove] 
+#					unload 		- Unload the module from kernel. [remove] 
+#					info		- Show the information of loaded module.
+#					dmesg		- Prints the live kernel ring buffer.
 #
-# * Signing the modlue is required for Secure boot enabled devices and
-#	signing key to be installed in the MOK. Please refer the regMOK for 
-#	more info: https://github.com/cipherswami/regMOK	
-##i#########################################################################
+# *signmod More info : https://github.com/cipherswami/signmod	
+##########################################################################
 
-### Define your Module Name ###
-MODULE_NAME := myModule
+######## Select Module ########
+MODULE ?= hello_world
 ###############################
 
-# Define the module objects
-obj-m := $(MODULE_NAME).o
-$(MODULE_NAME)-objs := main.o # Add other object files if needed
+# Makefile Variables
+include .config
+ARCH			?= x86_64
+CROSS_COMPILE	?= x86_64-linux-gnu-
+export
 
-# Set the target architecture (default is x86_64)
-ARCH ?= x86_64
+# Directories
+SDIR := $(PWD)/modules
+MDIR := $(SDIR)/$(MODULE)
+HDIR := /lib/modules/$(shell uname -r)
+KDIR := $(HDIR)/build
+IDIR := $(HDIR)/updates
 
-# Define the cross-compiler toolchain 
-CROSS_COMPILE ?=
+# Flags
+FLAGS += EXTRA_CFLAGS:=-I$(PWD)/include
 
-# Define the path to the current kernel build directory (kernel headers)
-KDIR := /lib/modules/$(shell uname -r)/build
+# Default target: build the kernel modules
+all: 
+	$(MAKE) -C $(KDIR) M=$(SDIR) $(FLAGS) modules
 
-# Define the installation path for the module
-INSTALL_PATH := /lib/modules/$(shell uname -r)/kernel/drivers/devmods/
+# Build the module defined by "MODULE" variable
+module: 
+	$(MAKE) -C $(KDIR) M=$(MDIR) $(FLAGS) modules
 
-# Build the kernel module
-all:
-	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) modules
-
-# Clean up build artifacts
+# Cleans the build artifacts
 clean:
-	$(MAKE) -C $(KDIR) M=$(PWD) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) clean
+	$(MAKE) -C $(KDIR) M=$(SDIR) clean
 
-# Sign the module (External Script NEEDED: https://github.com/cipherswami/regMOK)
+# Sign the kernel module (requires signmod external tool)
 sign:
-	sudo signmod $(MODULE_NAME).ko
+	sudo signmod $(MDIR)/$(MODULE).ko
 
-# Testing: Insert
-insert:
-	sudo insmod $(MODULE_NAME).ko
+# List the top 5 loaded modules
+lsmod:
+	lsmod | head -n 6
 
-# Testing: Remove
+# Insert the kernel module
+insert: sign
+	sudo insmod $(MDIR)/$(MODULE).ko
+
+# Remove the kernel module
 remove:
-	sudo rmmod $(MODULE_NAME)
+	sudo rmmod $(MODULE)
 
-# Install the module
-install:
-	sudo mkdir -p $(INSTALL_PATH)
-	sudo cp $(MODULE_NAME).ko $(INSTALL_PATH)
-	sudo depmod -a
+# Install the module to the kernel directory
+install: sign
+	sudo cp $(MDIR)/$(MODULE).ko $(IDIR) && sudo depmod -a
 
 # Uninstall the module
 uninstall:
-	sudo rm -f $(INSTALL_PATH)$(MODULE_NAME).ko
-	sudo depmod -a
+	sudo rm -f $(IDIR)/$(MODULE).ko && sudo depmod -a
 
-# Load the module
+# Load the module using modprobe
 load:
-	sudo modprobe $(MODULE_NAME)
+	sudo modprobe $(MODULE)
 
-# Unload the module
+# Unload the module using modprobe
 unload:
-	sudo modprobe -r $(MODULE_NAME)
+	sudo modprobe -r $(MODULE)
 
-.PHONY: all clean sign install uninstall load unload
+# Show module information
+info:
+	modinfo $(MDIR)/$(MODULE).ko
+
+# Clear ans show the Ring buffer
+dmesg:
+	clear && sudo dmesg -C && sudo dmesg -wHT || true
+
+# Target for debugging
+debug:
+	@echo $(FLAGS)
+
+.PHONY: all clean sign lsmod insert remove install uninstall load unload info dmesg debug
