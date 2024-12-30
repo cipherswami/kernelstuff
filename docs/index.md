@@ -1,3 +1,8 @@
+<head>
+  <title>Kernel Programming</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
 This document provides an overview of kernel programming and various concepts related to device drivers, kernel modules, and commands for managing them.
 
 ### Table of Contents <!-- omit in toc -->
