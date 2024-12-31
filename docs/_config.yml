@@ -25,7 +25,7 @@ email: aravindswami135@gmail.com
 description: >
   Linux Kernel programming made easy – from system calls to drivers and modules, all in one place
 
-baseurl: ""
+baseurl: "/docs"
 url: "https://www.cipherswami.github.io/"
 favicon: "favicon.ico"
 
