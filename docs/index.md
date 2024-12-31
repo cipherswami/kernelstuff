@@ -1,9 +1,12 @@
-<head>
-  <title>Kernel Programming</title>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-</head>
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+layout: default
+title: Home
+---
 
-This document provides an overview of kernel programming and various concepts related to device drivers, kernel modules, and commands for managing them.
+# Kernel Programming <!-- omit in toc -->
+This document provides an overview of kernel programming and various concepts related to device drivers, kernel modules, etc.
 
 ### Table of Contents <!-- omit in toc -->
 

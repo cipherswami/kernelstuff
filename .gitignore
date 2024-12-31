@@ -53,3 +53,9 @@ dkms.conf
 
 # User defined
 .vscode
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor
+*.lock
