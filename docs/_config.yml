@@ -1,0 +1,18 @@
+# Site Settings
+title: Kernel Programming
+description: >-
+  Leraning kerenel programming
+
+# Build Settings
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Author Information
+author:
+  name: Aravind Potluri
+  email: aravindswami135@gmail.com
+
+# Favicon
+favicon: /favicon.ico
