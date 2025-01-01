@@ -6,7 +6,7 @@ theme: jekyll-theme-hacker
 markdown: kramdown
 show_downloads: true
 github:
-  repository_url: cipherswami/KernelStuff
+  repository: cipherswami/KernelStuff
 twitter:
   username: cipherswami
   card: summary
