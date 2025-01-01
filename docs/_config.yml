@@ -1,12 +1,8 @@
-title: jekyll Hacker
-email: aravindswami135@gmail.com
-description: >-
-  Jekyll hacker theme test site
-domain: cipherswami.github.io
-url: https://cipherswami.github.io/
-baseurl:
-github: [metadata]
-
-# Build settings
-markdown: kramdown
+title: KernelStuff
+description: >
+  Linux Kernel programming made easy – from system calls to drivers and modules, all in one place
+url: "https://www.cipherswami.github.io"
 theme: jekyll-theme-hacker
+markdown: kramdown
+github: [metadata]
+twitter_username: cipherswami
