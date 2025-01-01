@@ -1,8 +1,16 @@
 title: KernelStuff
 description: >
   Linux Kernel programming made easy – from system calls to drivers and modules, all in one place
-url: "https://www.cipherswami.github.io"
+url: "https://cipherswami.github.io/kernelStuff"
+favicon: favicon.ico
 theme: jekyll-theme-hacker
 markdown: kramdown
-github: [metadata]
-twitter_username: cipherswami
+twitter:
+  title: cipherswami
+show_downloads: true
+github:
+  repository_url: cipherswami/KernelStuff
+
+twitter:
+  username: cipherswami
+  card: summary
