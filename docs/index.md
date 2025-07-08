@@ -5,152 +5,123 @@ layout: default
 title: Home
 ---
 
-# Learn Kernel Programming <!-- omit in toc -->
-This document provides an overview of kernel programming and various concepts related to device drivers, kernel modules, etc.
+## Learn Kernel Programming <!-- omit in toc -->
 
-### Table of Contents <!-- omit in toc -->
+Linux kernel programming is a specialized area that involves writing code that interacts directly with the operating system's kernel. This guide provides an overview of key concepts, practices, and resources for getting started in Linux kernel development.
 
-- [What is a device driver](#what-is-a-device-driver)
-- [What is a Kernel Module](#what-is-a-kernel-module)
-	- [Other Names](#other-names)
-	- [Standard Location for Kernel Modules](#standard-location-for-kernel-modules)
-- [Device Driver vs Kernel Modules](#device-driver-vs-kernel-modules)
-- [Advantages of Kernel Modules](#advantages-of-kernel-modules)
-- [Disadvantages of Kernel Modules](#disadvantages-of-kernel-modules)
-- [Types of Modules](#types-of-modules)
+#### Table of Contents <!-- omit in toc -->
+
+- [Kernel Basics](#kernel-basics)
+	- [What is Kernel Module](#what-is-kernel-module)
+	- [What is a Device Driver](#what-is-a-device-driver)
+- [Kernel Modules vs Device Driver](#kernel-modules-vs-device-driver)
+- [Module Types](#module-types)
 - [Basic Commands](#basic-commands)
 - [insmod vs modprobe](#insmod-vs-modprobe)
-	- [How modprobe calculates dependencies?](#how-modprobe-calculates-dependencies)
+	- [insmod](#insmod)
+	- [modprobe](#modprobe)
+- [How modprobe Calculates Dependencies](#how-modprobe-calculates-dependencies)
 
-## What is a device driver
 
-A device driver is a piece of software that controls a particular type of device which is connected to the computer system. Device driver has three sides:  
+## Kernel Basics
 
-- one talks with Kernel Space  
-- one talks with hardware  
-- one talks wirh User Space  
+###  What is Kernel Module
 
-Diagram:
+A **kernel module** is a piece of code that can be dynamically loaded into or unloaded from the kernel. It allows for kernel extension and modification without needing to recompile or reboot the system.
+
+- Other names:
+  - **Loadable Kernel Module (LKM)**
+  - **Module**
+
+- File extension: `.ko` (Kernel Object)
+
+### What is a Device Driver
+
+A **device driver** is software that enables the operating system (OS) to interact with hardware devices. The device driver acts as a mediator between three key components:
+
+- **User Space:** The part of the operating system where user applications run.
+- **Kernel Space:** The core of the operating system that manages hardware and system resources.
+- **Hardware:** Physical devices that the OS needs to interact with.
 
 ```
 	==================
-	=		 =
-	=   User	 =  ---------
-	= 		 =	    |
-	==================          |
-		|                   |
-		|                   |
-		|                   |
-	==================          |
-	=		 =          |
-	=   Kernel	 =          |
-	= 		 =          |  Via Device File
-	==================          |
-		|                   |
-		|Device Driver 
-		|                   |
-	==================          |
-	=		 =          |
-	=   Hardware	 = ---------
-	= 		 =
+	=     User       = ---------
+	==================        |
+	      |                   |
+	      |                   |
+	      |                   |
+	==================        |
+	=     Kernel     = Via Device File
+	==================        |
+	      |                   |
+	      |  Device Driver    |
+	      |                   |
+	==================        |
+	=    Hardware     = -------
 	==================
 ```
 
-## What is a Kernel Module
+## Kernel Modules vs Device Driver
 
-Kernel Modules are piece of code that can be loaded/inserted and unloaded/removed from the kernel as per the demand/need. Traditional way of adding code to the kernel was to recompile the kernel and reboot the system. 
+Although kernel modules can include device drivers, they serve a broader purpose. A kernel module is a more general concept that refers to any piece of code that can be loaded into the kernel. Device drivers are one specific use case of kernel modules.
 
-### Other Names
+Kernel modules are used for:
 
-1. Loadable Kernel Modules (LKM)
-2. Modules
+1. **Device drivers** - Managing hardware devices
+2. **File systems** - Managing data storage
+3. **System calls** - Enabling kernel-user communication
+4. **Network drivers** - Implementing networking protocols like TCP/IP
+5. **TTY line disciplines** - Managing terminal devices
 
-Extension: .ko (Kernel Object)
+## Module Types
 
-### Standard Location for Kernel Modules
+1. **In-Tree Modules**: Modules included in the official Linux kernel source code.
+2. **Out-of-Tree Modules**: Modules developed independently of the kernel source and compiled separately.
 
-Modules are installed in the  below directory of the rootfs by default:   
+Modules generally start as "out-of-tree" and become "in-tree" when accepted into the official kernel.
+
+Kernel modules are typically installed in:
 
 ```
-/lib/modules/<kernel version>
+/lib/modules/<kernel_version>
 ```
-
-## Device Driver vs Kernel Modules
-
-A kernel module may not be a device driver at all. A driver is like a sub-class of module.
-
-Modules are used for the below:
-
-1. Device Drivers.
-2. File System.
-3. System Calls.
-4. Network drivers: Drivers implementing a network protocol (TCP/IP).
-5. TTY line disciplines: For terminal devices.
-
-## Advantages of Kernel Modules
-
-1. All parts of the base kernel stay loaded all the time. Modules can save you memory, because you have to have them loaded only when you're actually using them
-
-2. Users would need to rebuild and reboot the kernel every time they would require a new functionality.
-
-3. A bug in driver which is compiled as a part of kernel will stop system from loading, whereas module allows systems to load. 
-
-4. Faster to maintain and debug
-
-5. Makes it easier to maintain multiple machines on a single kernel base.
-
-## Disadvantages of Kernel Modules
-
-1. Size:  Module management consumes unpageable kernel memory.  
-	- A basic kernel with a number of modules loaded will consume more memory than an equivalent kernel with the drivers compiled into the kernel image itself. 
-	- This can be a very significant issue on machines with limited physical memory.
-
-2. As the kernel modules are loaded very late in the boot process, hence core functionality has to go in the base kernel (E.g. Memory Management)
-
-3. Security: If you build your kernel statically and disable Linux's dynamic module loading feature, you prevent run-time modification of the kernel code. In order to support modules, the kernel must have been built with the following option enabled:
-	```
-	CONFIG_MODULES=y
-	```
-## Types of Modules
-
-1. In-Source Tree: Modules present in the Linux Kernel Source Code
-
-2. Out-of-Tree: Modules not present in the Linux Kernel Source Code.
-
-All modules start out as "out-of-tree" developments, that can be compiled using the context of a source-tree. 
-
-Once a module gets accepted to be included, it becomes an in-tree module.
 
 ## Basic Commands
 
-1. lsmod – List Modules that Loaded Already
-2. insmod – Insert Module into Kernel
-3. rmmod – Remove Module from Kernel
-4. modinfo – Display Module Info
-5. modprobe – Add or Remove modules from the kernel
+- `lsmod`: Lists currently loaded modules.
+- `insmod`: Inserts a specified module into the kernel.
+- `rmmod`: Removes a module from the kernel.
+- `modinfo`: Displays detailed information about a module.
+- `modprobe`: Adds or removes modules, handling dependencies automatically.
 
 ## insmod vs modprobe
 
-insmod:		Loads the module given 'insmod /path/to/module.ko'
-modprobe:	Loads the module only in /lib/modules/$(uname -r) 'modprobe /home/test/hello.ko' will not work
+### insmod
 
-insmod:		Dependencies if present are not loaded
-modprobe:	modprobe calculates dependencies, loads the dependencies and then the main module
+- **Usage**: `insmod /path/to/module.ko`
+- **Dependency Handling**: Does not handle dependencies automatically. Dependencies need to be manually resolved before loading the module.
+- **Scope**: Can load modules from any location, as the full path is specified.
 
-### How modprobe calculates dependencies?
+### modprobe
 
-Modprobe depends on depmod tool to calculate dependencies.
-depmod calculates dependencies of all the  modules present in `/lib/modules/$(uname -r)` folder, and places the dependency information in `/lib/modules/$(uname -r)/modules.dep` file
+- **Usage**: `modprobe module_name`
+- **Dependency Handling**: Automatically resolves and loads dependencies for the module.
+- **Scope**: Searches for modules in the default system path (`/lib/modules/$(uname -r)`), making it easier to load modules.
 
-Exapmle:
-```bash
-kernel/drivers/net/wireless/admtek/adm8211.ko: kernel/net/mac80211/mac80211.ko kernel/net/wireless/cfg80211.ko      kernel/drivers/misc/eeprom/eeprom_93cx6.ko
+## How modprobe Calculates Dependencies
 
-When you say modprobe adm8211.ko, eeprom_93cx6.ko, cfg80211.ko is loaded first and then adm8211.ko
+`modprobe` relies on `depmod` to calculate module dependencies. These dependencies are stored in the `/lib/modules/$(uname -r)/modules.dep` file.
 
-Modules are loaded right  to left and removed left to right
+Example of dependencies listed in `modules.dep`:
 
-So while removing adm8211.ko is removed, then cfg80211.ko and finally eeprom_93cx6.ko
+```
+kernel/drivers/adm8211.ko: kernel/net/cfg80211.ko kernel/drivers/eeprom_93cx6.ko
+```
 
-We can re-load the modules.dep file by running "depmod -a" command
+When running `modprobe adm8211`, `cfg80211` and `eeprom_93cx6` are loaded first, followed by `adm8211`. To remove the modules, they are unloaded in reverse order.
+
+To update the dependencies, run:
+
+```
+depmod -a
 ```
