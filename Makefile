@@ -1,21 +1,21 @@
 ###################### Linux Kernel Module Makefile #######################
-# Author		: 	Aravind Potluri <aravindswami135@gmail.com>
-# Arguments		: 	
-#					all			- Builds all module. 
-#					module		- Builds the defined module. 
-#					clean 		- Cleans the module build artifacts.
-#					sign 		- Signs the module. [Requires *signmod]
-#					lsmod		- List the last few installed modules.
-#					insert 		- Inserts the module for testing.
-#					remove 		- Removes the inserted module. 
-#					install 	- Module will be placed in source tree.
-#					uninstall	- Module will be removed from source tree.
-#					load 		- Load the source tree module. [insert]
-#					unload 		- Unload the module from kernel. [remove] 
-#					info		- Show the information of loaded module.
-#					dmesg		- Prints the live kernel ring buffer.
+# Author			: 	Aravind Potluri <aravindswami135@gmail.com>
+# Arguments		:
+# 		all					- Builds all module.
+# 		module			- Builds the defined module.
+# 		clean				- Cleans the module build artifacts.
+# 		sign				- Signs the module. [Requires *signmod]
+# 		lsmod				- List the last few installed modules.
+# 		insert			- Inserts the module for testing.
+# 		remove			- Removes the inserted module.
+# 		install			- Module will be placed in source tree.
+# 		uninstall		- Module will be removed from source tree.
+# 		load				- Load the source tree module. [insert]
+# 		unload			- Unload the module from kernel. [remove]
+# 		info				- Show the information of loaded module.
+# 		dmesg				- Prints the live kernel ring buffer.
 #
-# *signmod More info : https://github.com/cipherswami/signmod	
+# *signmod More info : https://github.com/cipherswami/signmod
 ##########################################################################
 
 ######## Select Module ########
@@ -39,11 +39,11 @@ IDIR := $(HDIR)/updates
 FLAGS += EXTRA_CFLAGS:=-I$(PWD)/include
 
 # Default target: build the kernel modules
-all: 
+all:
 	$(MAKE) -C $(KDIR) M=$(SDIR) $(FLAGS) modules
 
 # Build the module defined by "MODULE" variable
-module: 
+module:
 	$(MAKE) -C $(KDIR) M=$(MDIR) $(FLAGS) modules
 
 # Cleans the build artifacts
@@ -90,8 +90,4 @@ info:
 dmesg:
 	clear && sudo dmesg -C && sudo dmesg -wHT || true
 
-# Target for debugging
-debug:
-	@echo $(FLAGS)
-
-.PHONY: all clean sign lsmod insert remove install uninstall load unload info dmesg debug
+.PHONY: all clean sign lsmod insert remove install uninstall load unload info dmesg
